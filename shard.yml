@@ -1,8 +1,9 @@
 name: soegen
-version: 0.12.0
+version: 0.12.1
 
 authors:
   - ragmaanir <ragmaanir@gmail.com>
+  - lribeiro <ribeiro.luis@gmail.com>
 
 # dependencies:
 #   besked:

@@ -146,7 +146,7 @@ module Soegen
     end
 
     private def params_to_query_params(hash : Hash(String, String))
-      hash.map { |k, v| "#{URI.escape(k)}=#{URI.escape(v)}" }.join("&")
+      hash.map { |k, v| "#{URI.encode(k)}=#{URI.encode(v)}" }.join("&")
     end
 
     private def to_curl(request : HTTP::Request)
@@ -170,9 +170,9 @@ module Soegen
     end
 
     private def timed(&block)
-      start = Time.new
+      start = Time.local
       result = yield
-      Tuple.new(Timing.new(start, Time.new), result)
+      Tuple.new(Timing.new(start, Time.local), result)
     end
 
     def uri_path(path : String)
