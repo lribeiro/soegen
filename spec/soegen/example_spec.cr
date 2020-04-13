@@ -2,7 +2,7 @@ require "../spec_helper"
 
 describe Example do
   test "basic setup" do
-    logger = Logger.new(STDOUT)
+    logger = Log.for("soegen")
     server = Soegen::Server.new(
       host: "localhost",
       port: ES_PORT, # defaults to localhost:9200

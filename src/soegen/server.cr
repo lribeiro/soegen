@@ -1,6 +1,6 @@
 require "uri"
 require "http/client"
-require "logger"
+require "log"
 
 module Soegen
   class RequestError < Exception
@@ -26,11 +26,11 @@ module Soegen
 
     UTC_TIMESTAMP_FORMAT = Time::Format.new("%FT%XZ")
 
-    DEFAULT_LOG_FORMATTER = Logger::Formatter.new do |severity, datetime, progname, message, io|
-      UTC_TIMESTAMP_FORMAT.format(datetime.to_utc, io)
-      io << " " << Process.pid << " "
-      io << severity.to_s.rjust(5) << " " << progname << " " << message
-    end
+    # DEFAULT_LOG_FORMATTER = Logger::Formatter.new do |severity, datetime, progname, message, io|
+    #   UTC_TIMESTAMP_FORMAT.format(datetime.to_utc, io)
+    #   io << " " << Process.pid << " "
+    #   io << severity.to_s.rjust(5) << " " << progname << " " << message
+    # end
 
     # The type of the `#request_callback`
     alias Callback = (CompletedRequest, Timing) ->
@@ -48,7 +48,7 @@ module Soegen
                    ssl : Bool = false,
                    read_timeout : Time::Span = 2.seconds,
                    connect_timeout : Time::Span = 5.seconds,
-                   logger : Logger = Server.default_logger)
+                   logger : Log = Server.default_logger)
       client = HTTP::Client.new(host, port, ssl)
       client.connect_timeout = connect_timeout
       client.read_timeout = read_timeout
@@ -58,10 +58,9 @@ module Soegen
     def initialize(@client : HTTP::Client, @logger = Server.default_logger)
     end
 
-    def self.default_logger : Logger
-      l = Logger.new(STDOUT)
-      l.formatter = DEFAULT_LOG_FORMATTER
-      l
+    def self.default_logger : Log
+      Log.setup_from_env
+      Log.for("soegen")
     end
 
     def define_callback(&@request_callback : Callback)
@@ -76,7 +75,7 @@ module Soegen
 
     def up?
       request(:get, "").ok_ish?
-    rescue e : Errno
+    rescue e : Exception
       false
     end
 
@@ -115,7 +114,7 @@ module Soegen
       request = HTTP::Request.new(method, path, headers, body)
       request.query = params_to_query_params(params)
 
-      timing, response = timed do
+      timing, response = timed do  
         raw_response = @client.exec(request)
         CompletedRequest.new(request, raw_response)
       end
@@ -131,7 +130,7 @@ module Soegen
       "#{scheme}://#{client.host}:#{client.port}"
     end
 
-    def server
+    def server : Server
       self
     end
 
@@ -142,7 +141,7 @@ module Soegen
         to_curl(response.request)
       )
 
-      log_debug(str)
+      logger.debug {str}
     end
 
     private def params_to_query_params(hash : Hash(String, String))
@@ -175,12 +174,8 @@ module Soegen
       Tuple.new(Timing.new(start, Time.local), result)
     end
 
-    def uri_path(path : String)
+    def uri_path(path : String) : String
       path
-    end
-
-    private def log_debug(message)
-      logger.debug(message, "Soegen")
     end
   end
 end

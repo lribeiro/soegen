@@ -1,10 +1,11 @@
 require "../spec_helper"
+require "log"
 
 describe Soegen::Server do
   MATCH_ALL = {query: {match_all: {} of String => String}}
 
   test "initialization" do
-    logger = Logger.new(STDOUT)
+    logger = Log.for("soegen")
     server = Soegen::Server.new(
       "localhost",
       ES_PORT + 1,

@@ -5,15 +5,11 @@ require "microtest"
 # Use port 9500 because the setup and teardown methods
 # delete all indices in the instance and that might be bad
 # for some developers because they might lose data in their local instance
-ES_PORT     = ENV.fetch("ES_PORT", "9500").to_i
-ES_CMD      = ENV.fetch("SOEGEN_ES_CMD")
+ES_PORT     = ENV.fetch("ES_PORT", "9200").to_i
+ES_CMD      = ENV.fetch("SOEGEN_ES_CMD","elasticsearch")
 TRAVIS      = ENV.fetch("TRAVIS", "false") == "true"
 SOEGEN_PATH = File.expand_path(Dir.current)
 INDEX_NAME  = "soegen_test"
-
-# LOGGER     = Logger.new(File.new("log/test.log", "w"))
-# LOGGER.level = Logger::DEBUG
-# LOGGER.formatter = Soegen::Server::DEFAULT_LOG_FORMATTER
 
 def self.wait_for(msg = "Timeout", tries = 5, &block : -> Bool)
   while (tries -= 1) >= 0

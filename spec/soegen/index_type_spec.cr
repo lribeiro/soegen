@@ -30,11 +30,12 @@ describe Soegen::IndexType do
     end
   end
 
-  test "exists" do
-    idx = server.index(INDEX_NAME)
-    t = idx.type("events")
-    assert !t.exists?
-    t.post({data: 1})
-    assert t.exists?
-  end
+  # Deprecated in ES7.0
+  # test "exists" do
+  #   idx = server.index(INDEX_NAME)
+  #   t = idx.type("events")
+  #   assert !t.exists?
+  #   t.post({data: 1})
+  #   assert t.exists?
+  # end
 end

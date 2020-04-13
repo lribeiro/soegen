@@ -3,7 +3,8 @@ module Soegen
   # settings (`#get_settings`) of the index as well as methods for `#create`ing/`#delete`ing
   # the index, checking whether it `#exists?` and for getting a handle to an `#index_type`.
   class Index < Component
-    getter server, name
+    getter server : Server
+    getter name
 
     def initialize(@server : Server, @name : String)
     end
@@ -40,7 +41,7 @@ module Soegen
       IndexType.new(self, name)
     end
 
-    def uri_path(path : String)
+    def uri_path(path : String) : String
       server.uri_path(join_path(name, path))
     end
   end

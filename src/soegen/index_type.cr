@@ -18,6 +18,7 @@ module Soegen
     def initialize(@index : Index, @name : String)
     end
 
+    @[Deprecated("Index Types are deprecated since ES 7.0 will be removed in later releases")]
     def exists?
       request(:head, "").ok_ish?
     end
@@ -59,11 +60,11 @@ module Soegen
       request!(:delete, id)
     end
 
-    def uri_path(path : String)
+    def uri_path(path : String) : String
       index.uri_path(join_path(name, path))
     end
 
-    def server
+    def server : Server
       index.server
     end
   end
