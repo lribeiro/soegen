@@ -1,3 +1,4 @@
+require "json_mapping"
 module Soegen
   # Represents an elasticseach index-type and provides the related actions like
   # `#explain`, `#get`, `#update` and `#delete`.
